@@ -4,8 +4,8 @@
 ### 주제! 시니어 서비스
 
 -donghyen,
--hyojin,
--seoyoung,
--songyi,
--chaeyeon,
--myunjun
+hyojin,
+seoyoung,
+songyi,
+chaeyeon,
+myunjun
