@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'userappliance.dart';
-import 'chatbot.dart'; // chatbot.dart 임포트
+import 'chatbot.dart';
 import 'saved.dart';
-import 'settings.dart';
 import 'user.dart';
+import 'detection.dart';
 import 'package:flutter/gestures.dart';
-
 
 void main() {
   runApp(const Re());
@@ -25,7 +24,7 @@ class _ReState extends State<Re> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           bodyLarge: TextStyle(
             fontFamily: 'Pretendard',
             fontSize: 20.0,
@@ -47,40 +46,37 @@ class _ReState extends State<Re> {
             Column(
               children: [
                 // 헤더
-                Container(
+                Padding(
                   padding: const EdgeInsets.fromLTRB(30, 60, 30, 20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       GestureDetector(
                         onTap: () {
-                          // 뒤로가기 버튼 클릭 시 UserAppliance로 이동
                           Navigator.push(
                             context,
                             PageRouteBuilder(
                               pageBuilder: (context, animation, secondaryAnimation) =>
                               const UserAppliance(),
-                              transitionsBuilder:
-                                  (context, animation, secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: const AlwaysStoppedAnimation(1),
-                                  child: child,
-                                );
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                return child;
                               },
                             ),
                           );
                         },
                         child: const Icon(Icons.arrow_back_ios),
                       ),
-                      const SizedBox(width: 80), // 아이콘과 제목 사이의 간격
+                      const Spacer(),
                       const Text(
-                        'LG 디오스 오브제 컬렉...',
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                        'LG 디오스 오브제 컬렉션',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
+                      const Spacer(),
                     ],
                   ),
                 ),
-
                 // 스크롤 가능한 영역
                 Expanded(
                   child: SingleChildScrollView(
@@ -91,7 +87,7 @@ class _ReState extends State<Re> {
                         // 이미지
                         Container(
                           margin: const EdgeInsets.only(top: 40),
-                          child: Image.asset('assets/images/re/re-detail.png'),
+                          child: Image.asset('assets/images/re/redetail.png'),
                         ),
                         const SizedBox(height: 30),
                         // 자주 묻는 FAQ
@@ -100,7 +96,6 @@ class _ReState extends State<Re> {
                           children: [
                             Row(
                               children: [
-                                // 빨간 원 3개
                                 CircleAvatar(
                                   radius: 3,
                                   backgroundColor: const Color(0xFFFF5353),
@@ -116,7 +111,6 @@ class _ReState extends State<Re> {
                                   backgroundColor: const Color(0xFFFF5353),
                                 ),
                                 const SizedBox(width: 9),
-                                // '스팟에게 가장' 텍스트
                                 const Text(
                                   '스팟에게 가장',
                                   style: TextStyle(
@@ -127,7 +121,6 @@ class _ReState extends State<Re> {
                               ],
                             ),
                             const SizedBox(height: 4),
-                            // '자주 묻는 점이에요' 텍스트
                             const Text.rich(
                               TextSpan(
                                 children: [
@@ -160,11 +153,11 @@ class _ReState extends State<Re> {
                             padding: const EdgeInsets.only(bottom: 10.0),
                             child: Container(
                               padding: const EdgeInsets.fromLTRB(20, 25, 0, 25),
-                              width: 353,
+                              width: double.infinity,
                               height: 80,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
                                   color: Colors.black,
                                   width: 1.0,
@@ -184,58 +177,59 @@ class _ReState extends State<Re> {
                           child: Text.rich(
                             TextSpan(
                               children: [
-                                TextSpan(
+                                const TextSpan(
                                   text: '그 밖에 다른 점이 궁금하다면\n',
                                   style: TextStyle(
                                     fontSize: 18,
-                                  )
+                                  ),
                                 ),
                                 TextSpan(
-                                    text: '스포티',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      decoration: TextDecoration.underline
-                                    ),
-                                    recognizer: TapGestureRecognizer() // 터치 감지기 추가
-                                      ..onTap = () {
-                                        // '스포티'를 누르면 chatbot.dart로 넘어감
-                                        Navigator.push(
-                                          context,
-                                          PageRouteBuilder(
-                                            pageBuilder: (context, animation, secondaryAnimation) => ChatBot(),
-                                            transitionDuration: Duration.zero, // 애니메이션 시간을 0으로 설정
-                                            reverseTransitionDuration: Duration.zero, // 뒤로 가는 애니메이션도 없앰
-                                          ),
-                                        );
-
-                                      },
+                                  text: '스포티',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Color(0xFFFF5353),
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFFFF5353),
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation, secondaryAnimation) =>
+                                              ChatBot(),
+                                          transitionDuration: Duration.zero,
+                                          reverseTransitionDuration: Duration.zero,
+                                        ),
+                                      );
+                                    },
                                 ),
-                                TextSpan(
-                                    text: '에게 물어보세요!',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                    )
+                                const TextSpan(
+                                  text: '에게 물어보세요!',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
                                 ),
-                              ]
+                              ],
                             ),
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        SizedBox(height: 50,)
+                        const SizedBox(height: 30),
                       ],
                     ),
                   ),
                 ),
               ],
             ),
-
             // Bottom Navigation Bar
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
               child: Container(
-                height: 100,
+                height: 80,
                 decoration: const BoxDecoration(
                   color: Color(0xFFFF5353),
                   borderRadius: BorderRadius.only(
@@ -256,8 +250,7 @@ class _ReState extends State<Re> {
                         PageRouteBuilder(
                           pageBuilder: (context, animation, secondaryAnimation) =>
                           const User(),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             return FadeTransition(
                               opacity: const AlwaysStoppedAnimation(1),
                               child: child,
@@ -271,8 +264,7 @@ class _ReState extends State<Re> {
                         PageRouteBuilder(
                           pageBuilder: (context, animation, secondaryAnimation) =>
                           const Saved(),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             return FadeTransition(
                               opacity: const AlwaysStoppedAnimation(1),
                               child: child,
@@ -303,15 +295,32 @@ class _ReState extends State<Re> {
                 ),
               ),
             ),
-
             // 가운데 아이콘
             Positioned(
-              bottom: 60,
+              bottom: 40,
               left: 0,
               right: 0,
               child: GestureDetector(
                 onTap: () {
-                  // 가운데 아이콘 클릭 이벤트
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          ImagePredictionPage(),
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        const begin = Offset(1.0, 0.0);
+                        const end = Offset.zero;
+                        var tween = Tween(begin: begin, end: end)
+                            .chain(CurveTween(curve: Curves.easeInOut));
+                        var offsetAnimation = animation.drive(tween);
+
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
+                      },
+                    ),
+                  );
                 },
                 child: Container(
                   width: 75,

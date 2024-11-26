@@ -7,7 +7,7 @@ import 're.dart';
 import 'code.dart';
 import 'saved.dart';
 import 'settings.dart';
-import 'camera.dart';
+import 'detection.dart';
 
 void main() {
   runApp(const MyApp());
@@ -242,18 +242,31 @@ class _UserApplianceState extends State<UserAppliance> {
               right: 0,
               bottom: 40, // 버튼 위치 조정
               child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Camera(returnTo: 'user'),
-                    ),
-                  );
+                onTap: () {Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        ImagePredictionPage(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(1.0, 0.0);
+                      const end = Offset.zero;
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: Curves.easeInOut));
+                      var offsetAnimation = animation.drive(tween);
+
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
+                  ),
+                );
+
                 },
                 child: Center(
                   child: Container(
-                    width: 80,
-                    height: 80,
+                    width: 75,
+                    height: 75,
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFFFFF),
                       shape: BoxShape.circle,
@@ -275,7 +288,7 @@ class _UserApplianceState extends State<UserAppliance> {
                           shape: BoxShape.circle
                         ),
                         child: Icon(
-                          Icons.camera_alt_outlined,
+                          Icons.center_focus_strong,
                           color: Colors.white,
                           size: 30,
                         ),

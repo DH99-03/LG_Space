@@ -63,18 +63,7 @@ class _ChatBotState extends State<ChatBot> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) => Re(),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: const AlwaysStoppedAnimation(1),
-                                  child: child,
-                                );
-                              },
-                            ),
-                          );
+                          Navigator.pop(context); // 이전 페이지로 돌아가기
                         },
                         child: const Icon(Icons.arrow_back_ios),
                       ),

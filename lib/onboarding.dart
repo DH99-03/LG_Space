@@ -51,8 +51,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final List<String> images = [
     'assets/images/phone1.png',
     'assets/images/phone2.png',
-    'assets/images/phone3.png',
-    'assets/images/phone4.png',
+    'assets/images/ex3.png',
+    'assets/images/ex4.png',
   ];
 
   final List<String> subImages = [
@@ -73,10 +73,17 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
-        padding: EdgeInsets.fromLTRB(30, 80, 30, 80),
+        padding: EdgeInsets.fromLTRB(
+          size.width * 0.08,
+          size.height * 0.05,
+          size.width * 0.08,
+          size.height * 0.05,
+        ),
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -95,19 +102,28 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       return Column(
                         children: [
                           Container(
-                            height: 100,
-                            margin: EdgeInsets.only(top: 50),
+                            height: size.height * 0.15,
+                            margin: EdgeInsets.only(top: size.height * 0.05),
                             alignment: Alignment.center,
                             child: Text(
                               texts[index],
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                fontSize: size.width * 0.04,
+                                fontWeight: FontWeight.w600,
+                              ),
                               textAlign: TextAlign.center,
                             ),
                           ),
                           Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: 88),
-                            child: Image.asset(images[index]),
+                          decoration: BoxDecoration(
+                          color: Colors.white,
+                          ),// 흰색 배경
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.only(top: size.height * 0.0),
+                          child: Image.asset(
+                            images[index],
+                            width: size.width * 0.7,
+                          ),
                           ),
                         ],
                       );
@@ -117,19 +133,19 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 ElevatedButton(
                   onPressed: currentPage == texts.length - 1
                       ? () => goToLogin(context)
-                      : null, // null을 설정하여 다른 페이지에서는 비활성화
+                      : null, // 다른 페이지에서는 비활성화
                   child: Text(
                     '시작하기',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: size.width * 0.045,
                       color: currentPage == texts.length - 1 ? Colors.white : Color(0xFF878787),
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 55),
+                    minimumSize: Size(double.infinity, size.height * 0.07),
                     backgroundColor: currentPage == texts.length - 1 ? Color(0xFFFF5353) : Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40),
+                      borderRadius: BorderRadius.circular(size.width * 0.1),
                     ),
                     elevation: 0,
                   ),
@@ -137,8 +153,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               ],
             ),
             Positioned(
-              top: 635,
-              child: Image.asset(subImages[currentPage]),
+              top: size.height * 0.75,
+              child: Image.asset(
+                subImages[currentPage],
+                width: size.width * 0.2,
+              ),
             ),
           ],
         ),

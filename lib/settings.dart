@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'user.dart';
-import 'camera.dart';
 
 void main() {
   runApp(const Settings());

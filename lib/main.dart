@@ -24,7 +24,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  double _opacity = 1.0;  // 초기 opacity 값 1로 설정
+  double _opacity = 1.0; // 초기 opacity 값 1로 설정
 
   @override
   void initState() {
@@ -45,34 +45,44 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size; // 화면 크기 가져오기
+    final double imageWidth = size.width * 0.7; // 상단과 하단 이미지의 동일한 너비
     return Scaffold(
       backgroundColor: Colors.white,
       body: AnimatedOpacity(
         opacity: _opacity, // opacity 값에 따라 화면이 점차 사라짐
         duration: Duration(milliseconds: 500), // 애니메이션 지속 시간
-        child: Container(
-          padding: EdgeInsets.fromLTRB(0, 80, 0, 80),
-          child: ClipRect(
-            child: Column(
-              children: [
-                // circle-top
-                Container(
-                  margin: EdgeInsets.only(left: 100),
-                  child: Image.asset('assets/images/top.png'),
-                ),
-                // 이미지
-                Container(
-                  margin: EdgeInsets.only(top: 200),
-                  child: Image.asset('assets/images/logo.png'),
-                ),
-                // circle-bottom
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 200, 100, 0),
-                  child: Image.asset('assets/images/bottom.png'),
-                ),
-              ],
+        child: Stack(
+          children: [
+            // 상단 이미지
+            Positioned(
+              top: 80, // 화면 위에서 80px 여백
+              right: 0, // 오른쪽 정렬
+              child: Image.asset(
+                'assets/images/top.png',
+                width: imageWidth, // 상단 이미지 크기 설정
+                fit: BoxFit.contain, // 이미지 비율 유지하며 크기 조정
+              ),
             ),
-          ),
+            // 로고 이미지
+            Center(
+              child: Image.asset(
+                'assets/images/logo.png',
+                width: size.width * 0.55, // 로고 이미지 크기 설정
+                fit: BoxFit.contain, // 이미지 비율 유지하며 크기 조정
+              ),
+            ),
+            // 하단 이미지
+            Positioned(
+              bottom: 80, // 화면 아래에서 80px 여백
+              left: 0, // 왼쪽 정렬
+              child: Image.asset(
+                'assets/images/bottom.png',
+                width: imageWidth, // 하단 이미지 크기 설정
+                fit: BoxFit.contain, // 이미지 비율 유지하며 크기 조정
+              ),
+            ),
+          ],
         ),
       ),
     );
