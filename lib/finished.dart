@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:spot/re.dart';
-import 'package:spot/wash.dart';
+
+
 import 'user.dart';
-import 're.dart'; // refr.dart를 import
 import 'code.dart';
 
 void main() {

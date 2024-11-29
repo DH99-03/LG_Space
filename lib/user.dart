@@ -1,14 +1,58 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'detection.dart';
-import 'userappliance.dart';
+import 'package:http/http.dart' as http;
+import 'package:spot/detection.dart';
+import 'package:spot/userappliance.dart';
 
 void main() {
   runApp(const User());
 }
 
-class User extends StatelessWidget {
+class User extends StatefulWidget {
   const User({super.key});
+
+  @override
+  _UserState createState() => _UserState();
+}
+
+class _UserState extends State<User> {
+  int userId = 0;
+  String userName = ''; // userName 상태 변수
+  String address = '';
+
+  // fetchUserData 함수 수정
+  Future<void> fetchUserData() async {
+    final url = Uri.parse('http://192.168.219.201:8000/login');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      debugPrint('Response status################: ${response.statusCode}');
+      debugPrint('Response body##################: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        setState(() {
+          userId = data['id'] ?? 0;
+          userName = data['name'] ?? '이름 없음';
+          address = data['address'] ?? '주소 없음';
+        });
+      } else {
+        throw Exception('Failed to load user data');
+      }
+    } catch (e) {
+      throw Exception('Error connecting to the server: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData(); // 앱 시작 시 데이터 로딩
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +105,7 @@ class User extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: ' 권동현',
+                      text: ' $userName',
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                     TextSpan(text: '님\n '),
@@ -115,7 +159,7 @@ class User extends StatelessWidget {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => UserAppliance()), // 이동할 페이지 설정
+                                MaterialPageRoute(builder: (context) => UserAppliance(userId: userId, userName: userName)), // 이동할 페이지 설정
                               );
                             },
                             child: Container(
@@ -228,4 +272,5 @@ class User extends StatelessWidget {
       ),
     );
   }
+
 }

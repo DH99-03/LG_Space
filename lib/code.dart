@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'userappliance.dart';
 import 'chatbot.dart';
@@ -6,12 +8,17 @@ import 'user.dart';
 import 'detection.dart';
 import 'package:flutter/gestures.dart';
 
-void main() {
-  runApp(const Code());
-}
+import 'package:http/http.dart' as http;
 
 class Code extends StatefulWidget {
-  const Code({super.key});
+  final String modelName; // 전달받는 모델 이름
+  final int modelCategory; // 전달받는 모델 카테고리
+
+  const Code({
+    super.key,
+    required this.modelName,
+    required this.modelCategory,
+  });
 
   @override
   State<Code> createState() => _CodeState();
@@ -19,6 +26,41 @@ class Code extends StatefulWidget {
 
 class _CodeState extends State<Code> {
   int selected = 0; // 현재 선택된 인덱스
+  List<dynamic> questions = []; // 질문 데이터를 저장할 리스트
+  bool isLoading = true; // 로딩 상태 관리
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAppliances(); // 데이터를 가져오는 함수 호출
+  }
+
+  // 데이터를 가져오는 함수
+  Future<void> fetchAppliances() async {
+    const String url = 'http://192.168.219.201:8000/get_ques'; // FastAPI 서버 URL
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({"modelcate": widget.modelCategory}),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(utf8.decode(response.bodyBytes));
+        setState(() {
+          questions = responseData['questions'] ?? [];
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load questions with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Error fetching questions: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,32 +94,26 @@ class _CodeState extends State<Code> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) =>
-                              const UserAppliance(),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                return child;
-                              },
-                            ),
-                          );
+                          Navigator.pop(context); // 뒤로가기
                         },
                         child: const Icon(Icons.arrow_back_ios),
                       ),
-                      const Spacer(),
-                      const Text(
-                        'LG 코드제로 R5',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
+                      const SizedBox(width: 8), // 아이콘과 텍스트 간격 추가
+                      Expanded(
+                        child: Text(
+                          widget.modelName, // 전달받은 모델 이름
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1, // 텍스트 한 줄로 제한
+                          overflow: TextOverflow.ellipsis, // 넘치는 텍스트는 생략 처리
                         ),
                       ),
-                      const Spacer(),
                     ],
                   ),
                 ),
-                // 스크롤 가능한 영역
+                // 스크롤 가능한
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(30, 0, 30, 100), // 바텀 여백 추가
@@ -148,7 +184,7 @@ class _CodeState extends State<Code> {
                         const SizedBox(height: 27),
                         // '기능이 궁금해요' 버튼들
                         ...List.generate(
-                          6,
+                          questions.length, // questions 리스트의 길이만큼 생성
                               (index) => Padding(
                             padding: const EdgeInsets.only(bottom: 10.0),
                             child: Container(
@@ -163,11 +199,12 @@ class _CodeState extends State<Code> {
                                   width: 1.0,
                                 ),
                               ),
-                              child: const Text(
-                                '이 기능이 궁금해요!',
-                                style: TextStyle(
-                                  fontSize: 20,
+                              child: Text(
+                                questions[index]['ques_data'], // questions 리스트의 각 요소를 텍스트로 사용
+                                style: const TextStyle(
+                                  fontSize: 18,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),
